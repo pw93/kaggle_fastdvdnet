@@ -80,9 +80,11 @@ def main(**args):
             # extract ground truth (central frame)
             print('=========')
             imgs = data[0]['data']
+            #imgs is <class 'torch.Tensor'>
             print(type(imgs))
             print(imgs.shape, ctrl_fr_idx)
-            #print(np.max()
+            print(torch.min(imgs).item(), torch.max(imgs).item())
+            
 
             img_train, gt_train = normalize_augment(data[0]['data'], ctrl_fr_idx)
             N, _, H, W = img_train.size()
