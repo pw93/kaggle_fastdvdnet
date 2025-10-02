@@ -78,7 +78,7 @@ def main(**args):
 
             # convert inp to [N, num_frames*C. H, W] in  [0., 1.] from [N, num_frames, C. H, W] in [0., 255.]
             # extract ground truth (central frame)
-            print('=========')
+            print('######')
             imgs = data[0]['data']
             #imgs is <class 'torch.Tensor'>
             print(type(imgs))
