@@ -52,6 +52,9 @@ def main(**args):
 
     # Resume training or start anew
     start_epoch, training_params = resume_training(args, model, optimizer)
+    
+    
+    cnttt=0
 
     # Training
     start_time = time.time()
@@ -84,6 +87,23 @@ def main(**args):
             print(type(imgs))
             print(imgs.shape, ctrl_fr_idx)
             print(torch.min(imgs).item(), torch.max(imgs).item())
+            
+            cnttt+=1
+            if cnttt==1:
+                # imgs: torch.Size([64, 5, 3, 96, 96])
+                imgs = data[0]['data']
+
+                # Select first batch, first frame
+                img = imgs[0, 0]  # shape [3, 96, 96]
+
+                # Convert from torch tensor → numpy → HWC
+                img = img.cpu().numpy().transpose(1, 2, 0)  # [96, 96, 3]
+
+                # Ensure dtype is uint8 for cv2.imwrite
+                img = img.astype(np.uint8)
+
+                # Save
+                cv2.imwrite("/kaggle/working/first_frame.png", img)
             
 
             img_train, gt_train = normalize_augment(data[0]['data'], ctrl_fr_idx)
