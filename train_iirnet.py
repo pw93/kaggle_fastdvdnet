@@ -93,7 +93,7 @@ def main(**args):
             # Initialize feature map
             feature = torch.zeros(N, 3, H, W, device=device)  # n_feat=3
 
-            loss_batch = 0.0
+            
             for t in range(F):
                 img = img_train_seq[:, t, :, :, :]       # [N,3,H,W]
                 x = torch.cat([img, feature, noise_map], dim=1)  # [N,7,H,W]
@@ -102,13 +102,13 @@ def main(**args):
             # Compute loss against central frame
             loss = criterion(gt_train, denoised_img) / (N*2)
             loss.backward()
-            loss_batch += loss.item()
+            
 
             optimizer.step()
 
             # Logging
             if training_params['step'] % args['save_every'] == 0:                
-                log_train_psnr(denoised_img, gt_train, loss_batch, writer,
+                log_train_psnr(denoised_img, gt_train, loss, writer,
                                epoch, i, num_minibatches, training_params)
 
             training_params['step'] += 1
