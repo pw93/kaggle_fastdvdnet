@@ -155,6 +155,8 @@ if __name__ == "__main__":
     parser.add_argument("--trainset_dir", type=str, required=True)
     parser.add_argument("--valset_dir", type=str, required=True)
     parser.add_argument("--no_orthog", action='store_true')
+    parser.add_argument("--log_dir", type=str, default="logs", \
+                     help='path of log files')
 
     argspar = parser.parse_args()
     main(**vars(argspar))
