@@ -6,7 +6,7 @@ import torch.optim as optim
 from models2 import unet  # your UNetIIR model will wrap this
 from dataloaders import train_dali_loader
 from dataset import ValDataset
-from utils import svd_orthogonalization, close_logger, init_logging, normalize_augment
+from utils import close_logger, init_logging, normalize_augment
 from train_common import resume_training, lr_scheduler, log_train_psnr, \
                         validate_and_log, save_model_checkpoint
 
@@ -107,9 +107,7 @@ def main(**args):
             optimizer.step()
 
             # Logging
-            if training_params['step'] % args['save_every'] == 0:
-                if not training_params['no_orthog']:
-                    model.apply(svd_orthogonalization)
+            if training_params['step'] % args['save_every'] == 0:                
                 log_train_psnr(denoised_img, gt_train, loss_batch, writer,
                                epoch, i, num_minibatches, training_params)
 
