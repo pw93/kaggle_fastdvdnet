@@ -27,6 +27,8 @@ def main(**args):
                                     epoch_size=args['max_number_patches'],\
                                     random_shuffle=True,\
                                     temp_stride=3)
+    print("len loader_train")
+    print(len(loader_train))
 
     num_minibatches = int(args['max_number_patches']//args['batch_size'])
     ctrl_fr_idx = (args['temp_patch_size'] - 1) // 2
