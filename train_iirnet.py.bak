@@ -143,51 +143,20 @@ def main(**args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the IIR denoiser")
 
-    #Training parameters
-    parser.add_argument("--batch_size", type=int, default=64,     \
-                     help="Training batch size")
-    parser.add_argument("--epochs", "--e", type=int, default=80, \
-                     help="Number of total training epochs")
-    parser.add_argument("--resume_training", "--r", action='store_true',\
-                        help="resume training from a previous checkpoint")
-    parser.add_argument("--milestone", nargs=2, type=int, default=[50, 60], \
-                        help="When to decay learning rate; should be lower than 'epochs'")
-    parser.add_argument("--lr", type=float, default=1e-3, \
-                     help="Initial learning rate")
-    parser.add_argument("--no_orthog", action='store_true',\
-                        help="Don't perform orthogonalization as regularization")
-    parser.add_argument("--save_every", type=int, default=10,\
-                        help="Number of training steps to log psnr and perform \
-                        orthogonalization")
-    parser.add_argument("--save_every_epochs", type=int, default=5,\
-                        help="Number of training epochs to save state")
-    parser.add_argument("--noise_ival", nargs=2, type=int, default=[5, 55], \
-                     help="Noise training interval")
-    parser.add_argument("--val_noiseL", type=float, default=25, \
-                        help='noise level used on validation set')
-    # Preprocessing parameters
-    parser.add_argument("--patch_size", "--p", type=int, default=96, help="Patch size")
-    parser.add_argument("--temp_patch_size", "--tp", type=int, default=5, help="Temporal patch size")
-    parser.add_argument("--max_number_patches", "--m", type=int, default=256000, \
-                        help="Maximum number of patches")
-    # Dirs
+    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--epochs", type=int, default=80)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--max_number_patches", type=int, default=256000)
+    parser.add_argument("--patch_size", type=int, default=96)
+    parser.add_argument("--temp_patch_size", type=int, default=5)
+    parser.add_argument("--noise_ival", nargs=2, type=float, default=[5/255., 55/255.])
+    parser.add_argument("--val_noiseL", type=float, default=25/255.)
+    parser.add_argument("--save_every", type=int, default=10)
+    parser.add_argument("--trainset_dir", type=str, required=True)
+    parser.add_argument("--valset_dir", type=str, required=True)
+    parser.add_argument("--no_orthog", action='store_true')
     parser.add_argument("--log_dir", type=str, default="logs", \
                      help='path of log files')
-    parser.add_argument("--trainset_dir", type=str, default=None, \
-                     help='path of trainset')
-    parser.add_argument("--valset_dir", type=str, default=None, \
-                         help='path of validation set')
+
     argspar = parser.parse_args()
-
-    # Normalize noise between [0, 1]
-    argspar.val_noiseL /= 255.
-    argspar.noise_ival[0] /= 255.
-    argspar.noise_ival[1] /= 255.
-
-    print("\n### Training FastDVDnet denoiser model ###")
-    print("> Parameters:")
-    for p, v in zip(argspar.__dict__.keys(), argspar.__dict__.values()):
-        print('\t{}: {}'.format(p, v))
-    print('\n')
-
     main(**vars(argspar))
