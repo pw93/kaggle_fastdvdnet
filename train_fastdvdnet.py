@@ -81,31 +81,6 @@ def main(**args):
 
             # convert inp to [N, num_frames*C. H, W] in  [0., 1.] from [N, num_frames, C. H, W] in [0., 255.]
             # extract ground truth (central frame)
-            print('#####')
-            imgs = data[0]['data']
-            #imgs is <class 'torch.Tensor'>
-            print(type(imgs))
-            print(imgs.shape, ctrl_fr_idx)
-            print(torch.min(imgs).item(), torch.max(imgs).item())
-            
-            cnttt+=1
-            if cnttt==1:
-                # imgs: torch.Size([64, 5, 3, 96, 96])
-                imgs = data[0]['data']
-
-                # Select first batch, first frame
-                img = imgs[0, 0]  # shape [3, 96, 96]
-
-                # Convert from torch tensor → numpy → HWC
-                img = img.cpu().numpy().transpose(1, 2, 0)  # [96, 96, 3]
-
-                # Ensure dtype is uint8 for cv2.imwrite
-                img = img.astype(np.uint8)
-
-                # Save
-                cv2.imwrite("/kaggle/working/first_frame.png", img)
-            
-
             img_train, gt_train = normalize_augment(data[0]['data'], ctrl_fr_idx)
             N, _, H, W = img_train.size()
 
