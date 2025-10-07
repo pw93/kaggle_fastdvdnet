@@ -87,6 +87,14 @@ class train_dali_loader():
 	'''
 	def __init__(self, batch_size, file_root, sequence_length,
 				 crop_size, epoch_size=-1, random_shuffle=True, temp_stride=-1):
+        print("train_dali_loader:")
+        print(batch_size) 
+        print(file_root)
+        print(sequence_length)
+        print(crop_size)
+        print(epoch_size)
+        print(random_shuffle)
+        print(temp_stride)
 		# Builds list of sequence filenames
 		container_files = os.listdir(file_root)
 		container_files = [file_root + '/' + f for f in container_files]
@@ -112,6 +120,7 @@ class train_dali_loader():
 														auto_reset=True)
 
 	def __len__(self):
+        print("self.epoch_size: ", self.epoch_size)
 		return self.epoch_size
 
 	def __iter__(self):
