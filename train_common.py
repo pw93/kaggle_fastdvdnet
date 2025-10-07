@@ -71,6 +71,8 @@ def lr_scheduler(epoch, argdict):
 		current_lr = argdict['lr']
 	return current_lr, reset_orthog
 
+import time
+t0 = time.time()
 def	log_train_psnr(result, imsource, loss, writer, epoch, idx, num_minibatches, training_params):
 	'''Logs trai loss.
 	'''
@@ -81,8 +83,8 @@ def	log_train_psnr(result, imsource, loss, writer, epoch, idx, num_minibatches, 
 	writer.add_scalar('loss', loss.item(), training_params['step'])
 # 	writer.add_scalar('PSNR on training data', psnr_train, \
 # 		  training_params['step'])
-	print("[epoch {}][{}/{}] loss: {:1.4f} PSNR_train: {:1.4f}".\
-		  format(epoch+1, idx+1, num_minibatches, loss.item(), 0.0))
+	print("[epoch {}][{}/{}] [{}] loss: {:1.4f} PSNR_train: {:1.4f}".\
+		  format(epoch+1, idx+1, num_minibatches, time.time()-t0, loss.item(), 0.0))
 
 def save_model_checkpoint(model, argdict, optimizer, train_pars, epoch):
 	"""Stores the model parameters under 'argdict['log_dir'] + '/net.pth'
