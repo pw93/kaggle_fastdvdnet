@@ -100,8 +100,8 @@ def main(**args):
             if epoch<3:
                 imgn_train = img_train
             else:
-            #define noisy input
-            imgn_train = img_train + noise
+                #define noisy input
+                imgn_train = img_train + noise
 
             # Send tensors to GPU
             gt_train = gt_train.cuda(non_blocking=True)
