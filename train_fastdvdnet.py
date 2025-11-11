@@ -12,10 +12,18 @@ from dataloaders import train_dali_loader
 from utils import svd_orthogonalization, close_logger, init_logging, normalize_augment
 from train_common import resume_training, lr_scheduler, log_train_psnr, \
                     validate_and_log, save_model_checkpoint
-import numpy as np
+import shutil                    
+import os
+
 def main(**args):
     r"""Performs the main training loop
     """
+    dir_path = args['log_dir']
+    if os.path.exists(dir_path):
+        shutil.rmtree(dir_path)
+        print(f"Removed directory: {dir_path}")
+    else:
+        print(f"Directory does not exist: {dir_path}")
 
     # Load dataset
     print('> Loading datasets ...')
@@ -27,8 +35,6 @@ def main(**args):
                                     epoch_size=args['max_number_patches'],\
                                     random_shuffle=True,\
                                     temp_stride=3)
-    print("len loader_train")
-    print(len(loader_train))
 
     num_minibatches = int(args['max_number_patches']//args['batch_size'])
     ctrl_fr_idx = (args['temp_patch_size'] - 1) // 2
@@ -55,12 +61,10 @@ def main(**args):
     # Resume training or start anew
     start_epoch, training_params = resume_training(args, model, optimizer)
     
-    
-    cnttt=0
-
     # Training
     start_time = time.time()
     for epoch in range(start_epoch, args['epochs']):
+        print("epoch: ", epoch)
         # Set learning rate
         current_lr, reset_orthog = lr_scheduler(epoch, args)
         if reset_orthog:
@@ -92,6 +96,10 @@ def main(**args):
             noise = torch.zeros_like(img_train)
             noise = torch.normal(mean=noise, std=stdn.expand_as(noise))
 
+            
+            if epoch<3:
+                imgn_train = img_train
+            else:
             #define noisy input
             imgn_train = img_train + noise
 
@@ -116,7 +124,7 @@ def main(**args):
                     model.apply(svd_orthogonalization)
 
                 # Compute training PSNR
-                log_train_psnr(out_train, \
+                log_train_psnr(args, out_train, \
                                 gt_train, \
                                 loss, \
                                 writer, \
@@ -126,12 +134,25 @@ def main(**args):
                                 training_params)
             # update step counter
             training_params['step'] += 1
+            #@@
+            #break
+            
+        #@@
+        '''
+        device = torch.device('cuda')
+        state_temp_dict = torch.load("logs2/net.pth", map_location=device)        
+        device_ids = [0]
+        model = nn.DataParallel(model, device_ids=device_ids).cuda()
+        
+        model.load_state_dict(state_temp_dict)
+        '''
+        #~@@
 
         # Call to model.eval() to correctly set the BN layers before inference
         model.eval()
 
         # Validation and log images
-        validate_and_log(
+        validate_and_log(args,
                         model_temp=model, \
                         dataset_val=dataset_val, \
                         valnoisestd=args['val_noiseL'], \
@@ -176,7 +197,7 @@ if __name__ == "__main__":
                         orthogonalization")
     parser.add_argument("--save_every_epochs", type=int, default=5,\
                         help="Number of training epochs to save state")
-    parser.add_argument("--noise_ival", nargs=2, type=int, default=[5, 55], \
+    parser.add_argument("--noise_ival", nargs=2, type=int, default=[5, 45], \
                      help="Noise training interval")
     parser.add_argument("--val_noiseL", type=float, default=25, \
                         help='noise level used on validation set')
